@@ -1,0 +1,34 @@
+/* デザインの基準値。色・角丸・動きの緩急はここだけで決める。 */
+:root {
+  --bg: #0a0a0d;
+  --bg-2: #121218;
+  --surface: rgba(12, 12, 16, 0.58);
+  --surface-strong: rgba(16, 16, 22, 0.92);
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  --text: #ededf2;
+  --text-sub: #a3a3b2;
+  --text-faint: #6f6f7d;
+
+  /* アクセントは1色だけ。再生・進捗・選択中にのみ使う */
+  --accent: #d9b878;
+  --accent-2: #f3e3bd;
+  --accent-ink: #1a1408;
+  --danger: #ef6b6f;
+
+  --radius: 18px;
+  --radius-sm: 10px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --font-display: 'Cormorant Garamond', 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --font-body: 'Inter Variable', 'Noto Sans JP Variable', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', system-ui, sans-serif;
+
+  --gutter: clamp(16px, 4vw, 48px);
+  --column: 960px;
+  --header-h: 64px;
+
+  color-scheme: dark;
+}

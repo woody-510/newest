@@ -1,7 +1,18 @@
 # 動画作品サイト デザイン・実装仕様書
 
-> このファイルは実装担当（別のAIモデルや開発者）にそのまま渡すための仕様です。
-> 「必須」は必ず実装、「推奨」はできる範囲で、「任意」は余裕があれば。
+> デザインと仕組みの考え方をまとめた仕様です。実装は済んでいます。
+> 使い方（作品の追加・公開の手順）は [`README.md`](./README.md) を見てください。
+
+### 実装で仕様から変えたところ
+
+| 項目 | 仕様 | 実装 |
+|---|---|---|
+| 作品一覧の置き場所 | `public/works.json`（サイトと一緒に配信） | `media/works.json`（動画と一緒に R2 に置く）。作品を足すときにサイトを作り直さなくて済み、一覧もログイン制限の内側に入る |
+| フォント | Google Fonts | サイト内に同梱（外部への通信なし） |
+| Blender 背景が無いとき | 単色などの仮の連番 | スクロールで奥へ進む「光の回廊」をプログラムで描く |
+| ログイン制限 | Cloudflare Access のみ | Access に加えて、`/media/*` を返す前にログイン証明をサーバー側で検証（設定の抜けがあっても動画は守られる） |
+| 作品の並び順 | 新しい順 | `media/order.txt` で手動の順番も指定できる |
+| 追加した表示 | — | 右端の「道のり表示」（今どの作品あたりか・クリックで移動）、カード左の大きな通し番号、最後の画面（FIN） |
 
 ---
 
@@ -67,24 +78,25 @@ media/
 
 ### マニフェスト自動生成（必須）
 
-静的サイトはフォルダ一覧を取得できないため、`scripts/build-manifest.mjs` を作り、`public/works.json` を生成する。
+静的サイトはフォルダ一覧を取得できないため、`scripts/build-manifest.mjs` で `media/works.json` を生成する。
 
 - `media/videos/` を走査し、各ファイルについて：
   - `title`：ファイル名から最後の拡張子を除いたもの（そのまま）
-  - `id`：URL用のスラッグ（`encodeURIComponent(title)` で可）
+  - `id`：タイトルと同じ（URLに入れるときに `encodeURIComponent` する）
   - `thumb`：`media/thumbs/` 内で同名のファイル（jpg / jpeg / png / webp を探す）
   - `src`：HLSの `index.m3u8` のパス
   - `duration`：`ffprobe` で取得した秒数
   - `addedAt`：ファイルの更新日時
-- 並び順：`addedAt` の新しい順
+- 並び順：`media/order.txt` に書いたものを先に（書いた順）、残りは `addedAt` の新しい順
 
 ```json
 [
   {
-    "id": "%E5%A4%9C%E3%81%AE%E6%B8%AF",
+    "id": "夜の港",
     "title": "夜の港",
-    "thumb": "/media/thumbs/夜の港.jpg",
-    "src": "/media/hls/夜の港/index.m3u8",
+    "thumb": "/media/thumbs/%E5%A4%9C%E3%81%AE%E6%B8%AF.jpg",
+    "src": "/media/hls/%E5%A4%9C%E3%81%AE%E6%B8%AF/index.m3u8",
+    "type": "hls",
     "duration": 1712,
     "addedAt": "2026-11-01T12:00:00Z"
   }
@@ -126,9 +138,11 @@ media/
 
 | 用途 | フォント |
 |---|---|
-| サイト名・大見出し | `Cormorant Garamond`（600）または `Syne`（700） |
-| 作品タイトル・本文 | `Noto Sans JP`（400 / 500）＋ `Inter` |
+| サイト名・大見出し | `Cormorant Garamond`（日本語のサイト名のときは `Noto Serif JP`） |
+| 作品タイトル・本文 | `Noto Sans JP` ＋ `Inter` |
 | 時間・数字 | Inter の `font-variant-numeric: tabular-nums` |
+
+フォントは npm の `@fontsource` から同梱する（Google Fonts などの外部サービスには通信しない）。
 
 ---
 
@@ -363,35 +377,41 @@ ffmpeg -framerate 24 -i media/bg/render/tall/%04d.png -vf "scale=720:-2" \
 
 ---
 
-## 9. ファイル構成（例）
+## 9. ファイル構成
 
 ```
 /
 ├─ index.html
 ├─ src/
-│  ├─ main.js              ルーティング（#/ と #/watch/<id>）
-│  ├─ scroll-background.js スクロール連動の背景（連番の読み込み・描画・慣性）
+│  ├─ config.js            サイト名などの設定
+│  ├─ main.js              全体のまとめ役（読み込み・スクロール・#/watch/<id> の切り替え）
+│  ├─ scroll-background.js スクロール連動の背景（連番の読み込み・描画・慣性／仮の背景）
 │  ├─ gallery.js           1列のカード・スクロール連動の3D・ホバー効果
+│  ├─ watch.js             視聴画面
 │  ├─ player.js            独自プレイヤー（hls.js）
+│  ├─ storage.js           視聴位置・音量の保存
 │  └─ styles/
 │     ├─ tokens.css        色・角丸・イージングの変数
 │     ├─ base.css
 │     ├─ gallery.css
 │     └─ player.css
 ├─ functions/
-│  └─ media/[[path]].js    R2 から動画・サムネを返す
+│  └─ media/[[path]].js    R2 から作品一覧・動画・サムネを返す
+├─ server/
+│  └─ access.js            Cloudflare Access のログイン証明の検証
 ├─ public/
-│  ├─ works.json           ← スクリプトで自動生成
 │  ├─ robots.txt
-│  └─ bg/
+│  └─ bg/                  ← npm run bg で作る（Blender の背景）
 │     ├─ frames.json
 │     ├─ wide/0001.webp …
 │     └─ tall/0001.webp …
 ├─ scripts/
-│  ├─ build-manifest.mjs
-│  ├─ encode-hls.sh        ← 1章の ffmpeg コマンド
-│  └─ build-bg.sh          ← 5章の ffmpeg コマンド
-└─ media/                  ← .gitignore 対象（元素材）
+│  ├─ build-manifest.mjs   作品一覧を作る
+│  ├─ encode-hls.sh        HLS に変換する
+│  ├─ build-bg.sh          Blender の連番を変換する
+│  └─ upload-r2.sh         R2 にアップロードする
+├─ tests/
+└─ media/                  ← .gitignore 対象（元素材と works.json）
 ```
 
 ---

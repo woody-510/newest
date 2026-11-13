@@ -1,0 +1,27 @@
+{
+  "name": "film-archive",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "manifest": "node scripts/build-manifest.mjs",
+    "encode": "bash scripts/encode-hls.sh",
+    "bg": "bash scripts/build-bg.sh",
+    "upload": "bash scripts/upload-r2.sh",
+    "demo": "bash scripts/make-demo-media.sh && node scripts/build-manifest.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/noto-sans-jp": "^5.3.1",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/noto-serif-jp": "^5.3.1",
+    "hls.js": "^1.7.4"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}

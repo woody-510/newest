@@ -1,0 +1,16 @@
+# Cloudflare Pages の設定
+name = "film-archive"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-01"
+
+# 動画・サムネ・作品一覧（works.json）を置く R2 バケット。
+# functions/media/[[path]].js から env.MEDIA として読む。
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "film-archive-media"
+
+# Cloudflare Access のログイン確認（設定すると /media/* でログイン済みかを検証する）。
+# 値はダッシュボードの Pages → 設定 → 環境変数 で入れてもよい。
+# [vars]
+# ACCESS_TEAM_DOMAIN = "あなたのチーム名.cloudflareaccess.com"
+# ACCESS_AUD = "Access アプリケーションの Audience (AUD) タグ"

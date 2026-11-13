@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+
+# 元素材（動画・サムネ・HLS・Blenderの書き出し）はGitに入れない。R2 に置く。
+/media/

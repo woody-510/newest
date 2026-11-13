@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- 検索エンジンに載せない -->
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="same-origin" />
+    <meta name="theme-color" content="#0a0a0d" />
+    <title>ARCHIVE</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0d'/%3E%3Cpath d='M12 9.5v13l11-6.5z' fill='%23d9b878'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <div class="bg-shade" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="bg-load" aria-hidden="true"><i></i></div>
+
+    <div id="loader" aria-hidden="true">
+      <div class="loader-inner">
+        <span class="loader-name"></span>
+        <span class="loader-line"></span>
+      </div>
+    </div>
+
+    <div id="page">
+      <header class="site-header">
+        <a class="brand" href="#/" aria-label="一番上へ戻る"></a>
+        <div class="header-right">
+          <span class="header-count" hidden></span>
+          <a class="logout" hidden><span>ログアウト</span></a>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" aria-label="はじめに">
+          <div class="hero-inner">
+            <p class="hero-tagline"></p>
+            <h1 class="hero-title"></h1>
+            <p class="hero-sub"></p>
+          </div>
+          <button class="scroll-cue" type="button" aria-label="作品一覧へ進む">
+            <span>SCROLL</span>
+            <span class="scroll-cue-line"></span>
+          </button>
+        </section>
+
+        <section class="works" id="works" aria-label="作品一覧">
+          <div class="works-head" hidden><span>WORKS</span><span class="works-total"></span></div>
+          <ol class="works-list"></ol>
+        </section>
+
+        <section class="outro" hidden>
+          <div class="outro-inner">
+            <p class="outro-mark">FIN</p>
+            <p class="outro-text">最後までご覧いただき、ありがとうございます</p>
+            <button class="to-top" type="button"><span>最初に戻る</span></button>
+          </div>
+        </section>
+      </main>
+
+      <nav class="rail" aria-label="作品への移動"></nav>
+    </div>
+
+    <noscript>
+      <p style="position: fixed; inset: 0; z-index: 200; margin: 0; display: grid; place-items: center; color: #ededf2; background: #0a0a0d">
+        このサイトをご覧いただくには、JavaScript を有効にしてください。
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

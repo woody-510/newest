@@ -193,11 +193,35 @@ export class ScrollBackground {
     return -1;
   }
 
+  /** これから描きそうなコマを先に展開しておく（描く瞬間に展開すると、そこで引っかかる） */
+  warm(idx) {
+    if (idx === this.warmedAt) return;
+    const dir = idx >= (this.warmedAt ?? idx) ? 1 : -1;
+    this.warmedAt = idx;
+    for (let k = 1; k <= 4; k++) {
+      this.frames[idx + dir * k]?.decode?.().catch(() => {});
+    }
+  }
+
   renderFrames() {
-    const idx = this.nearestLoaded(Math.round(this.progress * (this.count - 1)));
+    // コマとコマの間は、隣り合う2コマを重ねてつなぐ（1コマずつ切り替えると、ゆっくり動くときにカクつく）
+    const pos = this.progress * (this.count - 1);
+    const base = Math.min(Math.floor(pos), this.count - 1);
+    let idx = base;
+    let next = -1;
+    let mix = 0;
+    if (this.frames[base] && this.frames[base + 1]) {
+      mix = Math.round((pos - base) * 32) / 32;
+      if (mix >= 1) idx = base + 1;
+      else if (mix > 0) next = base + 1;
+    } else {
+      // まだ読み込み中のコマは、いちばん近い読み込み済みのコマで代用する
+      idx = this.nearestLoaded(Math.round(pos));
+    }
     if (idx < 0) return;
     const img = this.frames[idx];
     const { ctx, w, h } = this;
+    this.warm(idx);
 
     // 画面を覆うように拡大（少し大きめにして、マウスに合わせてわずかに動かす）
     const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight) * 1.035;
@@ -206,11 +230,17 @@ export class ScrollBackground {
     const px = clamp(-this.mx * w * 0.012, -(dw - w) / 2, (dw - w) / 2);
     const py = clamp(-this.my * h * 0.012, -(dh - h) / 2, (dh - h) / 2);
     // 同じコマ・同じ位置なら描き直さない
-    const key = `${idx}|${px.toFixed(1)}|${py.toFixed(1)}|${w}|${h}`;
+    const key = `${idx}|${next}|${mix}|${px.toFixed(1)}|${py.toFixed(1)}|${w}|${h}`;
     if (key === this.lastFrameKey) return;
     this.lastFrameKey = key;
     ctx.imageSmoothingQuality = 'high';
+    ctx.globalAlpha = 1;
     ctx.drawImage(img, (w - dw) / 2 + px, (h - dh) / 2 + py, dw, dh);
+    if (next >= 0) {
+      ctx.globalAlpha = mix;
+      ctx.drawImage(this.frames[next], (w - dw) / 2 + px, (h - dh) / 2 + py, dw, dh);
+      ctx.globalAlpha = 1;
+    }
   }
 
   // ───────── 仮の背景（光の回廊） ─────────

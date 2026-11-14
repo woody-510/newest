@@ -55,5 +55,8 @@ export default defineConfig({
     configureServer(server) { server.middlewares.use(mediaMiddleware); },
     configurePreviewServer(server) { server.middlewares.use(mediaMiddleware); },
   }],
+  // media/ は変更を監視しない（大きなファイルが多く、Windows では監視中のフォルダを
+  // 改名できなくなり、npm run encode の最後の仕上げが「アクセス拒否」で失敗するため）
+  server: { watch: { ignored: [`${MEDIA_DIR.replace(/\\/g, '/')}/**`] } },
   build: { target: 'es2022' },
 });

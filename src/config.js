@@ -12,7 +12,7 @@ export const config = {
   /** Blender背景の連番（npm run bg で作られる。無ければ、プログラムで描く仮の背景になる） */
   framesUrl: '/bg/frames.json',
 
-  /** ログアウトのリンク（Cloudflare Access）。不要なら showLogout を false に */
-  showLogout: true,
+  /** ログアウトのリンク（Cloudflare Access）。ログイン制限なしで公開するので、出さない */
+  showLogout: false,
   logoutUrl: '/cdn-cgi/access/logout',
 };

@@ -56,7 +56,14 @@ function setupText() {
   document.title = config.pageTitle;
   $('.loader-name').textContent = config.siteName;
   $('.brand').textContent = config.siteName;
-  $('.hero-tagline').textContent = config.tagline;
+  const tagline = $('.hero-tagline');
+  tagline.textContent = config.tagline;
+  tagline.hidden = !config.tagline;
+  if (config.tagline && config.taglineBelow) {
+    // 小さな一行を、サイト名の下に置く
+    $('.hero-title').after(tagline);
+    heroInner.classList.add('has-tagline-below');
+  }
 
   // サイト名を1文字ずつに分けて、順番に現れるようにする
   const title = $('.hero-title');

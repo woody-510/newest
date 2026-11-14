@@ -330,6 +330,13 @@ html.is-ready #loader {
   transform: scaleX(-1);
   margin-left: -0.42em;
 }
+/* 小さな一行をサイト名の下に置くとき（config.taglineBelow） */
+.has-tagline-below .hero-title {
+  margin: 0 0 22px;
+}
+.has-tagline-below .hero-tagline {
+  margin-bottom: 26px;
+}
 .hero-title {
   margin: 26px 0 30px;
   font-family: var(--font-display);
